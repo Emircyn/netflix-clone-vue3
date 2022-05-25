@@ -69,7 +69,7 @@ const state = reactive({
             <p class="content">{{ item.title }}</p>
           </div>
           <div class="swiper-button">
-            <RouterLink class="button-rounded" to="about"
+            <RouterLink class="button-rounded" :to="`/movies/${item.id}`"
               ><i class="bx bx-info-circle"></i
             ></RouterLink>
           </div>

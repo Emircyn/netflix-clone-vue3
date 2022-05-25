@@ -35,11 +35,7 @@ export const UseMainStore = defineStore({
             this.lang
           }`
         );
-        console.log(
-          `https://api.themoviedb.org/3/movie/${
-            this.movies.results[this.movieSelect].id
-          }?api_key=${this.apiKey}&append_to_response=videos`
-        );
+
         this.movie = response.data;
 
         this.officialTrailer = response.data.videos.results.filter(
@@ -48,7 +44,7 @@ export const UseMainStore = defineStore({
         this.TrailerUrl =
           'https://www.youtube-nocookie.com/embed/' +
           this.officialTrailer[0].key +
-          '?vq=hd720&autoplay=1&controls=0&mute=';
+          '?vq=hd720&autoplay=1&controls=0&rel=0&mute=';
       } catch (err) {
         this.videos = err;
       }
