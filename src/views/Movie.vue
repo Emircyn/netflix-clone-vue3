@@ -1,14 +1,23 @@
 <script setup>
-import BillboardVue from '../components/Billboard.vue';
+import { defineAsyncComponent } from 'vue';
 import LoadingVue from '../components/Loading.vue';
-import SwiperVue from '../components/Swiper.vue';
+const SwiperVue = defineAsyncComponent(() =>
+  import('../components/Swiper.vue')
+);
+const BillboardVue = defineAsyncComponent(() =>
+  import('../components/Billboard.vue')
+);
 </script>
 <template>
-  <BillboardVue />
   <Suspense>
+    <template #default>
+      <main>
+        <BillboardVue type="movie" />
+        <SwiperVue type="movie" netflix_title="Netflix'te Popüler Filmler" />
+      </main>
+    </template>
     <template #fallback>
       <LoadingVue />
     </template>
-    <SwiperVue netflix_title="Netflix'te Popüler Filmler" />
   </Suspense>
 </template>

@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import tvSeries from '../views/tvSeries.vue';
-import Movie from '../views/Movie.vue';
-import movieDetail from '../views/movieDetail.vue';
+const HomeView = () => import('../views/HomeView.vue');
+const tvSeries = () => import('../views/tvSeries.vue');
+const Movie = () => import('../views/Movie.vue');
+const movieDetail = () => import('../views/movieDetail.vue');
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [

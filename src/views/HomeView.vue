@@ -7,13 +7,19 @@ const SwiperVue = defineAsyncComponent(() =>
 const BillboardVue = defineAsyncComponent(() =>
   import('../components/Billboard.vue')
 );
+const type = ['movie', 'tv'];
+
+const random = Math.floor(Math.random() * 2);
 </script>
 <template>
   <Suspense>
     <template #default>
       <main>
-        <BillboardVue />
-        <SwiperVue netflix_title="Netflix'te Popüler Filmler" />
+        <BillboardVue :type="type[Math.floor(Math.random() * 2)]" />
+        <SwiperVue
+          :type="type[Math.floor(Math.random() * 2)]"
+          netflix_title="Netflix'te Popüler"
+        />
       </main>
     </template>
     <template #fallback>
