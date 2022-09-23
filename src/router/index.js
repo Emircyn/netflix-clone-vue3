@@ -1,11 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 const HomeView = () => import('../views/HomeView.vue');
 const tvSeries = () => import('../views/tvSeries.vue');
 const Movie = () => import('../views/Movie.vue');
 const movieDetail = () => import('../views/movieDetail.vue');
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
