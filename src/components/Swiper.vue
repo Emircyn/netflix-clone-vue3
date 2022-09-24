@@ -11,12 +11,6 @@ const mainStore = UseMainStore();
 const appAxios = inject('appAxios');
 
 const state = reactive({
-  imgObj: {
-    src: null,
-    error: 'http://xx.com/error.png',
-    loading:
-      'https://cdn.dribbble.com/users/1106178/screenshots/4175222/media/5244fb173280f7d2fe8707a48106abea.gif',
-  },
   fetchData: [],
   modules: [Navigation],
   swiperOptions: {
@@ -54,7 +48,7 @@ onMounted(async () => {
     )
     .then((response) => {
       state.fetchData = response.data.results.filter(
-        (data) => data.poster_path
+        (data) => data.poster_path !== null
       );
     });
 });
@@ -88,13 +82,14 @@ const props = defineProps({
         class="mySwiper"
       >
         <swiper-slide
-          v-for="(item, index) in state.fetchData"
+          v-for="(item, index) in state.fetchData || []"
           :key="index"
-          v-lazy:background-image="state.imgObj"
+          v-lazy:background-image.container="
+            `${mainStore.imagesUrl}${item.poster_path}`
+          "
+          lazy="loading"
+          class="skeleton"
         >
-          <span style="display: none">{{
-            (state.imgObj.src = mainStore.imagesUrl + item.poster_path)
-          }}</span>
           <div class="swiper-content">
             <h5 class="content-title" style="text-transform: capitalize">
               {{

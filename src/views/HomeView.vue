@@ -1,5 +1,5 @@
 <script setup>
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent, ref } from 'vue';
 import LoadingVue from '../components/Loading.vue';
 import { UseMainStore } from '../stores/mainStore';
 
@@ -14,6 +14,7 @@ const SwiperVue = defineAsyncComponent({
   delay: 200,
   timeout: 3000,
 });
+let pages = ref(15);
 </script>
 <template>
   <Suspense>
@@ -21,7 +22,7 @@ const SwiperVue = defineAsyncComponent({
       <main>
         <BillboardVue />
         <SwiperVue
-          v-for="(value, key) in 30"
+          v-for="(value, key) in pages"
           :key="key"
           :page="key + 1"
           :type="mainStore.type[Math.floor(Math.random() * 2)]"

@@ -1,9 +1,17 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import Search from '../Search.vue';
+const router = inject('router');
 const menuContext = ref(['Anasafya', 'Diziler', 'Filmler']);
-const menuURL = ref(['/', '/tv-series', '/movies']);
+const menuURL = ref(['/', '/tv', '/movies']);
 const menuIcon = ref(['bx-home-alt', 'bx-tv', 'bx-camera-movie']);
+
+// const subIsActive = (input) => {
+//   const paths = Array.isArray(input) ? input : [input];
+//   return paths.some((path) => {
+//     return router.path.indexOf(path) === 0;
+//   });
+// };
 </script>
 
 <template>

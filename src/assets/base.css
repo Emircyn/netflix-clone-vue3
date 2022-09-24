@@ -57,26 +57,19 @@ section {
 ul {
   list-style: none;
 }
-.skeleton {
-  display: block;
-  background-color: rgba(34, 34, 34, 1);
-  animation-name: Skeleton;
-  animation-duration: 1.5s;
-  animation-iteration-count: infinite;
-  background-image: none !important;
-  z-index: 100;
+.skeleton[lazy='loading'] {
+  animation: skeleton-loading 1s linear infinite alternate;
 }
-@keyframes Skeleton {
+
+@keyframes skeleton-loading {
   0% {
-    background-color: rgba(34, 34, 34, 0.2);
-  }
-  50% {
     background-color: rgba(34, 34, 34, 1);
   }
   100% {
-    background-color: rgba(34, 34, 34, 0.2);
+    background-color: #111;
   }
 }
+
 .fadeOut {
   animation-name: fadeOut;
 }

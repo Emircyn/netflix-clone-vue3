@@ -1,8 +1,4 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
-const HomeView = () => import('../views/HomeView.vue');
-const tvSeries = () => import('../views/tvSeries.vue');
-const Movie = () => import('../views/Movie.vue');
-const movieDetail = () => import('../views/movieDetail.vue');
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -10,32 +6,32 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: import(/* webpackPrefetch: true */ '../views/HomeView.vue'),
     },
     {
-      path: '/tv-series',
-      name: 'tv-series',
+      path: '/tv',
+      name: 'tvs',
 
-      component: tvSeries,
+      component: import(/* webpackPrefetch: true */ '../views/tvSeries.vue'),
     },
     {
-      path: '/movies',
+      path: '/movie',
       name: 'movies',
 
-      component: Movie,
+      component: import(/* webpackPrefetch: true */ '../views/Movie.vue'),
     },
     {
       path: '/movie/:id',
       name: 'movie',
 
-      component: movieDetail,
+      component: import(/* webpackPrefetch: true */ '../views/movieDetail.vue'),
     },
 
     {
       path: '/tv/:id',
       name: 'tv',
 
-      component: movieDetail,
+      component: import(/* webpackPrefetch: true */ '../views/movieDetail.vue'),
     },
   ],
   scrollBehavior(to, from, savedPosition) {
