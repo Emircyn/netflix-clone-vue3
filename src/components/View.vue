@@ -104,7 +104,7 @@ onMounted(async () => {
               :href="
                 (state.details.homepage || []).length > 0
                   ? state.details.homepage
-                  : href
+                  : null
               "
               :class="
                 (state.details.homepage || []).length > 0 ? null : 'isDisabled'
@@ -123,7 +123,7 @@ onMounted(async () => {
     </div>
   </div>
   <div class="container">
-    <div class="view-element" v-if="state.credits">
+    <div class="view-element" v-if="(state.credits || []).length > 0">
       <h2>{{ mainStore.lang == 'tr-TR' ? 'Aktörler' : 'The lead actors' }}</h2>
       <swiper
         :modules="state.modules"
