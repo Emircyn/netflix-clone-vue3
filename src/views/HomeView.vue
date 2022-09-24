@@ -1,24 +1,30 @@
 <script setup>
 import { defineAsyncComponent } from 'vue';
 import LoadingVue from '../components/Loading.vue';
-const SwiperVue = defineAsyncComponent(() =>
-  import('../components/Swiper.vue')
-);
+import { UseMainStore } from '../stores/mainStore';
+
 const BillboardVue = defineAsyncComponent(() =>
   import('../components/Billboard.vue')
 );
-const type = ['movie', 'tv'];
+const mainStore = UseMainStore();
 
-const random = Math.floor(Math.random() * 2);
+const SwiperVue = defineAsyncComponent({
+  loader: () => import('../components/Swiper.vue'),
+  loadingComponent: LoadingVue,
+  delay: 200,
+  timeout: 3000,
+});
 </script>
 <template>
   <Suspense>
     <template #default>
       <main>
-        <BillboardVue :type="type[Math.floor(Math.random() * 2)]" />
+        <BillboardVue />
         <SwiperVue
-          :type="type[Math.floor(Math.random() * 2)]"
-          netflix_title="Netflix'te Popüler"
+          v-for="(value, key) in 30"
+          :key="key"
+          :page="key + 1"
+          :type="mainStore.type[Math.floor(Math.random() * 2)]"
         />
       </main>
     </template>

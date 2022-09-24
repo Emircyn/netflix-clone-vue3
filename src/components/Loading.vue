@@ -6,9 +6,7 @@ const mainStore = UseMainStore();
 <template>
   <div class="ademilter">
     <div class="netflix"></div>
-    <p v-if="mainStore.movies.code" style="color: #fff">
-      {{ mainStore.movies.code }}
-    </p>
+    <p style="color: #fff">mainStore.movies.code</p>
     <div class="race-by"></div>
   </div>
 </template>

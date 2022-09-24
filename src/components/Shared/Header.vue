@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import Search from './Search.vue';
+import Search from '../Search.vue';
 const menuContext = ref(['Anasafya', 'Diziler', 'Filmler']);
 const menuURL = ref(['/', '/tv-series', '/movies']);
 const menuIcon = ref(['bx-home-alt', 'bx-tv', 'bx-camera-movie']);

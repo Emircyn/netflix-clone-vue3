@@ -12,8 +12,13 @@ const BillboardVue = defineAsyncComponent(() =>
   <Suspense>
     <template #default>
       <main>
-        <BillboardVue type="movie" />
-        <SwiperVue type="movie" netflix_title="Netflix'te Popüler Filmler" />
+        <BillboardVue />
+        <SwiperVue
+          v-for="(value, key) in 30"
+          :key="key"
+          :page="key + 1"
+          type="movie"
+        />
       </main>
     </template>
     <template #fallback>

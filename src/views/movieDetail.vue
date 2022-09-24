@@ -1,3 +1,6 @@
+<script setup>
+import View from '../components/View.vue';
+</script>
 <template>
-  <h1>movieDetail</h1>
+  <View />
 </template>
