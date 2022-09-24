@@ -3,7 +3,7 @@ import { ref, inject } from 'vue';
 import Search from '../Search.vue';
 const router = inject('router');
 const menuContext = ref(['Anasafya', 'Diziler', 'Filmler']);
-const menuURL = ref(['/', '/tv', '/movies']);
+const menuURL = ref(['/', '/tv', '/movie']);
 const menuIcon = ref(['bx-home-alt', 'bx-tv', 'bx-camera-movie']);
 
 // const subIsActive = (input) => {
