@@ -6,15 +6,21 @@ import { UseMainStore } from '../stores/mainStore';
 const BillboardVue = defineAsyncComponent(() =>
   import('../components/Billboard.vue')
 );
-const mainStore = UseMainStore();
-
 const SwiperVue = defineAsyncComponent({
   loader: () => import('../components/Swiper.vue'),
   loadingComponent: LoadingVue,
   delay: 200,
   timeout: 3000,
 });
-let pages = ref(15);
+const mainStore = UseMainStore();
+let scroll = ref('');
+let pages = ref(10);
+window.addEventListener('scroll', (event) => {
+  window.clearTimeout(scroll);
+  scroll = setTimeout(() => {
+    pages.value += 2;
+  }, 500);
+});
 </script>
 <template>
   <Suspense>
