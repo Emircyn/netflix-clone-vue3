@@ -24,7 +24,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="content-grid">
+  <div
+    class="content-grid"
+    :style="`background-image: url('${
+      mainStore.imagesUrl + state.details.backdrop_path
+    }');`"
+  >
     <div class="content">
       <div class="img">
         <img
