@@ -72,7 +72,7 @@ const props = defineProps({
         >{{
           mainStore.lang == 'tr-TR'
             ? `Netflix'te Popüler ${
-                props.type == 'movie' ? 'Filimler' : 'Diziler'
+                props.type == 'movie' ? 'Filmler' : 'Diziler'
               }`
             : `Netflix Popular ${
                 props.type == 'movie' ? 'Movies' : 'Tv-Series'
