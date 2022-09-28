@@ -20,7 +20,7 @@ window.addEventListener('scroll', (event) => {
   <Suspense>
     <template #default>
       <main>
-        <BillboardVue />
+        <BillboardVue type="movie" />
         <SwiperVue
           v-for="(value, key) in pages"
           :key="key"

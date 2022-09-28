@@ -84,11 +84,26 @@ onMounted(async () => {
 <template>
   <div
     class="content-grid skeleton"
-    v-lazy:background-image="
-      `${mainStore.imagesUrl}${state.details.backdrop_path}`
-    "
+    v-lazy:background-image="`${mainStore.bgUrl}${state.details.backdrop_path}`"
     lazy="loading"
   >
+    <div class="content">
+      <div
+        :title="`${mainStore.lang == 'tr-TR' ? 'Geri Dön' : 'Go Back'}`"
+        @click="router.back()"
+      >
+        <button
+          style="
+            position: absolute;
+            background-color: transparent;
+            color: white;
+          "
+          class="button"
+        >
+          <span> <i class="bx bxs-chevrons-left"></i></span>
+        </button>
+      </div>
+    </div>
     <div class="content">
       <div class="img">
         <img
@@ -98,19 +113,14 @@ onMounted(async () => {
           class="skeleton"
         />
 
-        <button class="button button-more margin-i-auto">
+        <button
+          v-if="(state.details.homepage || []).length > 0"
+          class="button button-more margin-i-auto"
+        >
           <span
-            ><a
-              :href="
-                (state.details.homepage || []).length > 0
-                  ? state.details.homepage
-                  : null
-              "
-              :class="
-                (state.details.homepage || []).length > 0 ? null : 'isDisabled'
-              "
-              >{{ mainStore.lang === 'tr-TR' ? 'Anasayfa' : 'Homepage' }}</a
-            ></span
+            ><a target="_blank" :href="state.details.homepage || []">{{
+              mainStore.lang === 'tr-TR' ? 'Anasayfa' : 'Homepage'
+            }}</a></span
           >
         </button>
       </div>
@@ -162,7 +172,6 @@ onMounted(async () => {
     </div>
 
     <div class="view-element">
-      <h2 v-if="router.currentRoute._value.name == 'tv'">Current Season</h2>
       <div class="about">
         <div
           class="img skeleton"

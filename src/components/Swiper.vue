@@ -48,13 +48,20 @@ onMounted(async () => {
     )
     .then((response) => {
       state.fetchData = response.data.results.filter(
-        (data) => data.poster_path !== null
+        (data) =>
+          data.poster_path !== null &&
+          data.backdrop_path !== null &&
+          data.overview.length > 0
       );
     });
 });
 const props = defineProps({
-  page: Number,
-  type: String,
+  page: {
+    page: String,
+  },
+  type: {
+    type: String,
+  },
 });
 </script>
 

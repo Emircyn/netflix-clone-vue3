@@ -13,25 +13,20 @@ const SwiperVue = defineAsyncComponent({
   timeout: 3000,
 });
 const mainStore = UseMainStore();
-let scroll = ref('');
-let pages = ref(10);
-window.addEventListener('scroll', (event) => {
-  window.clearTimeout(scroll);
-  scroll = setTimeout(() => {
-    pages.value += 2;
-  }, 500);
-});
+let pages = ref(15);
 </script>
 <template>
   <Suspense>
     <template #default>
       <main>
-        <BillboardVue />
+        <BillboardVue
+          :type="mainStore.type[~~(Math.random() * mainStore.type.length)]"
+        />
         <SwiperVue
           v-for="(value, key) in pages"
           :key="key"
           :page="key + 1"
-          :type="mainStore.type[Math.floor(Math.random() * 2)]"
+          :type="mainStore.type[~~(Math.random() * mainStore.type.length)]"
         />
       </main>
     </template>

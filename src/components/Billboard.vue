@@ -1,26 +1,155 @@
-<script setup></script>
-<template>
-  <div class="billboard">
-    <div class="billboard-content">
-      <h1>mainStore.tv.name</h1>
-      <h2>mainStore.tv.tagline</h2>
-      <p>mainStore.tv.overview.slice(0, 200)</p>
+<script setup>
+import { UseMainStore } from '../stores/mainStore';
+import { onMounted, inject, reactive } from 'vue';
+const mainStore = UseMainStore();
+const appAxios = inject('appAxios');
 
-      <h1>mainStore.tv.name</h1>
+const state = reactive({
+  fetchData: [],
+  details: [],
+  video: [],
+  videoPlay: false,
+  muted: true,
+});
+
+const changeBillboard = async () => {
+  await appAxios
+    .get(
+      `/trending/${props.type}/day?api_key=${
+        import.meta.env.VITE_APP_API_KEY
+      }&language=${mainStore.lang}&page=1`
+    )
+    .then((response) => {
+      const movie = response.data.results.filter(
+        (data) => data.backdrop_path !== null && data.overview !== ''
+      );
+
+      state.fetchData = movie[Math.floor(Math.random() * 20)];
+    });
+  await appAxios
+    .get(
+      `/${props.type}/${state.fetchData.id}/videos?api_key=${
+        import.meta.env.VITE_APP_API_KEY
+      }&language=${mainStore.lang}&append_to_response=videos`
+    )
+    .then((videoResponse) => {
+      state.video = videoResponse.data.results.find(
+        (vid) => vid.type === 'Trailer' && vid.official === true
+      );
+    });
+};
+const random = Math.floor(Math.random() * 20);
+onMounted(async () => {
+  await appAxios
+    .get(
+      `/trending/${props.type}/day?api_key=${
+        import.meta.env.VITE_APP_API_KEY
+      }&language=${mainStore.lang}&page=1`
+    )
+    .then((response) => {
+      const movie = response.data.results.filter(
+        (data) =>
+          data.poster_path !== null &&
+          data.backdrop_path !== null &&
+          data.overview.length > 0
+      );
+
+      state.fetchData = movie[random];
+    });
+  await appAxios
+    .get(
+      `/${props.type}/${state.fetchData.id}/videos?api_key=${
+        import.meta.env.VITE_APP_API_KEY
+      }&language=${mainStore.lang}&append_to_response=videos`
+    )
+    .then((videoResponse) => {
+      state.video = videoResponse.data.results.find(
+        (vid) => vid.type === 'Trailer' && vid.official === true
+      );
+    });
+});
+const props = defineProps({
+  type: String,
+});
+</script>
+<template>
+  <div
+    class="billboard skeleton"
+    v-lazy:background-image.container="
+      `${mainStore.bgUrl}${state.fetchData.backdrop_path}`
+    "
+    lazy="loading"
+  >
+    <iframe
+      v-if="state.videoPlay"
+      class="billboard"
+      :src="`https://www.youtube.com/embed/${
+        state.video.key
+      }?rel=0&autoplay=1&muted=${state.muted ? 1 : 0}&controls=0`"
+      :title="`${state.video.name}`"
+      frameborder="0"
+      allow="autoplay"
+      allowfullscreen
+      style="z-index: 0"
+    ></iframe>
+    <!-- <iframe
+      v-if="state.videoPlay"
+      :src="`https://www.youtube.com/embed/${state.video.key}??autoplay=1`"
+      class="billboard"
+      style="z-index: 0"
+      type="application/pdf"
+      frameborder="0"
+      allowfullscreen
+      allow="autoplay"
+    ></iframe> -->
+    <div class="billboard-content">
+      <h1>{{ state.fetchData.title || state.fetchData.name }}</h1>
+      <h2>{{ state.fetchData.tagline }}</h2>
+      <p>{{ state.fetchData.overview || '' }}</p>
 
       <div class="billboard-buttons">
-        <button class="button button-white margin-r-05">
-          <span> <i class="bx bxs-right-arrow"></i>&nbsp;Oynat</span>
+        <button
+          class="button button-white margin-r-05"
+          @click="state.videoPlay = !state.videoPlay"
+          v-if="state.video"
+        >
+          <span>
+            <i
+              :class="`bx ${
+                state.videoPlay ? 'bx-stop-circle' : 'bxs-right-arrow'
+              }`"
+            ></i
+            >&nbsp;{{
+              !state.videoPlay
+                ? mainStore.lang == 'tr-TR'
+                  ? 'Oynat'
+                  : 'Play'
+                : mainStore.lang == 'tr-TR'
+                ? 'Durdur'
+                : 'Stop'
+            }}</span
+          >
         </button>
-        <RouterLink :to="`/tv/11`">
+        <RouterLink :to="`/${props.type}/${state.fetchData.id}`">
           <button class="button button-gray margin-r-05">
             <i class="bx bx-info-circle"></i>&nbsp;Daha fazlası
           </button></RouterLink
         >
-        <button class="button button-gray margin-r-05">
-          <i class="bx bx-volume-mute"></i>
+        <button
+          class="button button-gray margin-r-05"
+          @click="state.muted = !state.muted"
+          v-if="state.videoPlay"
+        >
+          <i
+            class="bx"
+            :class="`${state.muted ? 'bx-volume-mute' : 'bx-volume-full'}`"
+          ></i>
         </button>
-        <button class="button button-gray">
+        <button
+          class="button button-gray"
+          v-if="!state.videoPlay"
+          @click="changeBillboard"
+        >
           <i class="bx bx-refresh"></i>
         </button>
       </div>
@@ -28,63 +157,3 @@
     <div class="billboard-overlay"></div>
   </div>
 </template>
-<style scoped>
-.tooltip {
-  opacity: 0;
-  transform: translateY(-30px) scale(0.96);
-  transition: transform 0.35s, opacity 0.25s;
-}
-
-.tooltip-show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  transition: transform 0.35s, opacity 1s;
-}
-.line-wobble {
-  --uib-size: 80px;
-  --uib-speed: 1.75s;
-  --uib-color: black;
-  --uib-line-weight: 5px;
-
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: var(--uib-line-weight);
-  width: 100%;
-  border-radius: calc(var(--uib-line-weight) / 2);
-  overflow: hidden;
-  transform: translate3d(0, 0, 0);
-}
-
-.line-wobble::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: var(--uib-color);
-  opacity: 0.1;
-}
-
-.line-wobble::after {
-  content: '';
-  height: 100%;
-  width: 100%;
-  border-radius: calc(var(--uib-line-weight) / 2);
-  animation: wobble var(--uib-speed) ease-in-out infinite;
-  transform: translateX(-95%);
-  background-color: var(--uib-color);
-}
-
-@keyframes wobble {
-  0%,
-  100% {
-    transform: translateX(-95%);
-  }
-  50% {
-    transform: translateX(95%);
-  }
-}
-</style>
