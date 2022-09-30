@@ -18,11 +18,15 @@ const menuIcon = ref(['bx-home-alt', 'bx-tv', 'bx-camera-movie']);
   <nav id="navbar" class="sticky">
     <div class="left-side">
       <div class="logo margin-i-2">
-        <RouterLink :to="menuURL[0]"
-          ><img
-            src="https://www.freepnglogos.com/uploads/netflix-logo-0.png"
-            width="100"
+        <RouterLink :to="menuURL[0]">
+          <img
+            v-lazy="
+              `${'https://www.freepnglogos.com/uploads/netflix-logo-0.png'}`
+            "
+            draggable="false"
+            lazy="loading"
             alt="Logo"
+            width="100"
         /></RouterLink>
       </div>
       <div class="menu">

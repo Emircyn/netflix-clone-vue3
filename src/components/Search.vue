@@ -1,66 +1,71 @@
-<script>
-export default {
-  data() {
-    return {
-      isActive: false,
-    };
-  },
+<script setup>
+import { ref, inject } from 'vue';
+import { UseMainStore } from '../stores/mainStore';
+const mainStore = UseMainStore();
 
-  methods: {
-    active: function () {
-      this.isActive = true;
-    },
-    close: function () {
-      this.isActive = false;
-    },
-    clearSearch() {
-      this.query = '';
-      this.results = [];
-    },
-  },
+const isActive = ref(false);
+const myInput = ref(null);
+const query = ref(null);
+
+const router = inject('router');
+
+function pushWithQuery(query) {
+  mainStore.query = query;
+  router.push(`search?q=${query}`);
+  query.value = '';
+}
+
+const activeInput = () => {
+  isActive.value
+    ? (isActive.value = false && myInput.value.blur())
+    : (isActive.value =
+        true &&
+        setTimeout(function () {
+          myInput.value.focus();
+        }, 500) &&
+        router.push('/search'));
 };
 </script>
 <template>
-  <div class="search-box" v-bind:class="{ active: isActive }">
-    <div class="icon" @click="active()">
-      <i class="bx bx-search-alt-2"></i>
+  <div class="search-box" :class="{ active: isActive }">
+    <div class="icon" @click="activeInput">
+      <i :class="`bx ${isActive ? 'bx-exit' : 'bx-search-alt-2'}`"></i>
     </div>
     <div class="input">
-      <input type="text" name="search" id="search" placeholeder="Type Search" />
-    </div>
-    <div class="close" @click="clearSearch()">
-      <i @click="close()" class="bx bx-x"></i>
-    </div>
-    <div class="search-list">
-      <!-- <div v-for="result in results" :key="result" class="search-item">
-        <p v-if="result.media_type != 'person'" style="color: #fff">
-          {{ (type = result.media_type) }}
-        </p>
-        <a
-          v-if="result.media_type == 'tv' || result.media_type == 'movie'"
-          :href="movieDetailsPath() + result.id"
-          @click="result = null"
-        >
-          <p>{{ result.title }}</p>
-          <p v-if="result.media_type == 'person'">{{ result.name }}</p>
-          <img
-            v-if="result.media_type == 'person' && result.profile_path != null"
-            v-bind:src="
-              'http://image.tmdb.org/t/p/original/' + result.profile_path
-            "
-          />
-          <img
-            v-if="result.poster_path != null"
-            v-bind:src="
-              'http://image.tmdb.org/t/p/original/' + result.poster_path
-            "
-          />
-          <img
-            v-if="result.poster_path == null || result.profile_path == null"
-            src="https://upload.kabasakalonline.com/kabasakal/ilan/2021-08/netflix-ultra-hd-hesap-639395-2021-08-05-19-1.png"
-          />
-        </a>
-      </div> -->
+      <input
+        ref="myInput"
+        type="search"
+        name="search"
+        @keyup="pushWithQuery(query)"
+        id="search"
+        v-model="query"
+        autocomplete="off"
+        :placeholder="`${mainStore.lang == 'tr-TR' ? 'Ara' : 'Type Search'}`"
+      />
     </div>
   </div>
 </template>
+<style>
+input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50em;
+  background: url(https://pro.fontawesome.com/releases/v5.10.0/svgs/solid/times-circle.svg)
+    no-repeat 50% 50%;
+  background-size: contain;
+  background-color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  margin: 2.5px 5px 2.5px 5px;
+}
+
+input[type='search']:focus::-webkit-search-cancel-button {
+  opacity: 0.5;
+  pointer-events: all;
+}
+
+input[type='search'].dark::-webkit-search-cancel-button {
+  filter: invert(1);
+}
+</style>

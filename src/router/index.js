@@ -7,27 +7,34 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () =>
-        import(/* webpackPrefetch: true */ '../views/HomeView.vue'),
+        import(/* webpackChunkName: home */ '../views/HomeView.vue'),
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: () =>
+        import(/* webpackChunkName: search */ '../views/SearchView.vue'),
     },
     {
       path: '/tv',
       name: 'tvs',
 
       component: () =>
-        import(/* webpackPrefetch: true */ '../views/tvSeries.vue'),
+        import(/* webpackChunkName: tvs */ '../views/tvSeries.vue'),
     },
     {
       path: '/movie',
       name: 'movies',
 
-      component: () => import(/* webpackPrefetch: true */ '../views/Movie.vue'),
+      component: () =>
+        import(/* webpackChunkName: movies */ '../views/Movie.vue'),
     },
     {
       path: '/movie/:id',
       name: 'movie',
 
       component: () =>
-        import(/* webpackPrefetch: true */ '../views/movieDetail.vue'),
+        import(/* webpackChunkName: movie */ '../views/movieDetail.vue'),
     },
 
     {
@@ -35,7 +42,7 @@ const router = createRouter({
       name: 'tv',
 
       component: () =>
-        import(/* webpackPrefetch: true */ '../views/movieDetail.vue'),
+        import(/* webpackChunkName: tv */ '../views/movieDetail.vue'),
     },
   ],
   scrollBehavior(to, from, savedPosition) {

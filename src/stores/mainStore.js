@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { watch } from 'vue';
 
 export const UseMainStore = defineStore({
   id: 'mainStore',
@@ -9,5 +10,6 @@ export const UseMainStore = defineStore({
     lang:
       window.navigator.language == 'tr' ? 'tr-TR' : window.navigator.language,
     type: ['movie', 'tv'],
+    query: '',
   }),
 });

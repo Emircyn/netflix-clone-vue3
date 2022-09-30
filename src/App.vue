@@ -1,8 +1,10 @@
 <script setup>
-import { onMounted } from 'vue';
+import { inject } from 'vue';
 import LoadingVue from './components/Loading.vue';
 import { UseMainStore } from './stores/mainStore';
 const mainStore = UseMainStore();
+const router = inject('router');
+router.currentRoute._value.name != 'search' ? (mainStore.query = '') : null;
 </script>
 
 <template>

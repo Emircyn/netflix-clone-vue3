@@ -85,23 +85,13 @@ const props = defineProps({
       class="billboard"
       :src="`https://www.youtube.com/embed/${
         state.video.key
-      }?rel=0&autoplay=1&muted=${state.muted ? 1 : 0}&controls=0`"
+      }?rel=0&autoplay=1&muted=${state.muted ? 1 : 0}&controls=0&vq=hd1080p`"
       :title="`${state.video.name}`"
       frameborder="0"
       allow="autoplay"
       allowfullscreen
       style="z-index: 0"
     ></iframe>
-    <!-- <iframe
-      v-if="state.videoPlay"
-      :src="`https://www.youtube.com/embed/${state.video.key}??autoplay=1`"
-      class="billboard"
-      style="z-index: 0"
-      type="application/pdf"
-      frameborder="0"
-      allowfullscreen
-      allow="autoplay"
-    ></iframe> -->
     <div class="billboard-content">
       <h1>{{ state.fetchData.title || state.fetchData.name }}</h1>
       <h2>{{ state.fetchData.tagline }}</h2>
