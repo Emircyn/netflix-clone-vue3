@@ -3,6 +3,7 @@ import { UseMainStore } from '../stores/mainStore';
 import { onMounted, inject, reactive } from 'vue';
 const mainStore = UseMainStore();
 const appAxios = inject('appAxios');
+const router = inject('router');
 
 const state = reactive({
   fetchData: [],
@@ -11,24 +12,45 @@ const state = reactive({
   videoPlay: false,
   muted: true,
 });
-
+const toSeoUrl = (url) => {
+  return url
+    .toString() // Convert to string
+    .normalize('NFD') // Change diacritics
+    .replace(/[\u0300-\u036f]/g, '') // Remove illegal characters
+    .replace(/\s+/g, '-') // Change whitespace to dashes
+    .toLowerCase() // Change to lowercase
+    .replace(/&/g, '-and-') // Replace ampersand
+    .replace(/[^a-z0-9\-]/g, '') // Remove anything that is not a letter, number or dash
+    .replace(/-+/g, '-') // Remove duplicate dashes
+    .replace(/^-*/, '') // Remove starting dashes
+    .replace(/-*$/, ''); // Remove trailing dashes
+};
 const changeBillboard = async () => {
   await appAxios
     .get(
-      `/trending/${props.type}/day?api_key=${
-        import.meta.env.VITE_APP_API_KEY
-      }&language=${mainStore.lang}&page=1`
+      `/trending/${
+        router.currentRoute._value.name == 'home'
+          ? 'all'
+          : router.currentRoute._value.name == 'tvs'
+          ? 'tv'
+          : 'movie'
+      }/day?api_key=${import.meta.env.VITE_APP_API_KEY}&language=${
+        mainStore.lang
+      }&page=1`
     )
     .then((response) => {
       const movie = response.data.results.filter(
-        (data) => data.backdrop_path !== null && data.overview !== ''
+        (data) =>
+          data.poster_path !== null &&
+          data.backdrop_path !== null &&
+          data.overview !== ''
       );
 
       state.fetchData = movie[Math.floor(Math.random() * 20)];
     });
   await appAxios
     .get(
-      `/${props.type}/${state.fetchData.id}/videos?api_key=${
+      `/${state.fetchData.media_type}/${state.fetchData.id}/videos?api_key=${
         import.meta.env.VITE_APP_API_KEY
       }&language=${mainStore.lang}&append_to_response=videos`
     )
@@ -38,13 +60,31 @@ const changeBillboard = async () => {
       );
     });
 };
+const isMobile = () => {
+  if (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    )
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 const random = Math.floor(Math.random() * 20);
 onMounted(async () => {
   await appAxios
     .get(
-      `/trending/${props.type}/day?api_key=${
-        import.meta.env.VITE_APP_API_KEY
-      }&language=${mainStore.lang}&page=1`
+      `/trending/${
+        router.currentRoute._value.name == 'home'
+          ? 'all'
+          : router.currentRoute._value.name == 'tvs'
+          ? 'tv'
+          : 'movie'
+      }/day?api_key=${import.meta.env.VITE_APP_API_KEY}&language=${
+        mainStore.lang
+      }&page=1`
     )
     .then((response) => {
       const movie = response.data.results.filter(
@@ -58,7 +98,7 @@ onMounted(async () => {
     });
   await appAxios
     .get(
-      `/${props.type}/${state.fetchData.id}/videos?api_key=${
+      `/${state.fetchData.media_type}/${state.fetchData.id}/videos?api_key=${
         import.meta.env.VITE_APP_API_KEY
       }&language=${mainStore.lang}&append_to_response=videos`
     )
@@ -67,9 +107,6 @@ onMounted(async () => {
         (vid) => vid.type === 'Trailer' && vid.official === true
       );
     });
-});
-const props = defineProps({
-  type: String,
 });
 </script>
 <template>
@@ -81,7 +118,7 @@ const props = defineProps({
     lazy="loading"
   >
     <iframe
-      v-if="state.videoPlay"
+      v-if="state.videoPlay && isMobile()"
       class="billboard"
       :src="`https://www.youtube.com/embed/${
         state.video.key
@@ -101,7 +138,7 @@ const props = defineProps({
         <button
           class="button button-white margin-r-05"
           @click="state.videoPlay = !state.videoPlay"
-          v-if="state.video"
+          v-if="state.video && isMobile()"
         >
           <span>
             <i
@@ -120,7 +157,9 @@ const props = defineProps({
             }}</span
           >
         </button>
-        <RouterLink :to="`/${props.type}/${state.fetchData.id}`">
+        <RouterLink
+          :to="`/${state.fetchData.media_type}/${state.fetchData.id}`"
+        >
           <button class="button button-gray margin-r-05">
             <i class="bx bx-info-circle"></i>&nbsp;Daha fazlası
           </button></RouterLink

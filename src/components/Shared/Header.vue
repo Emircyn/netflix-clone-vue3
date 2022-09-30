@@ -1,8 +1,16 @@
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, inject, onMounted } from 'vue';
+import { UseMainStore } from '../../stores/mainStore';
+
 import Search from '../Search.vue';
 const router = inject('router');
-const menuContext = ref(['Anasafya', 'Diziler', 'Filmler']);
+const mainStore = UseMainStore();
+const menuContext = ref();
+onMounted(() => {
+  mainStore.lang == 'tr-TR'
+    ? (menuContext.value = ['Anasafya', 'Diziler', 'Filmler'])
+    : (menuContext.value = ['Home', 'Tv-Series', 'Movies']);
+});
 const menuURL = ref(['/', '/tv', '/movie']);
 const menuIcon = ref(['bx-home-alt', 'bx-tv', 'bx-camera-movie']);
 
@@ -31,7 +39,7 @@ const menuIcon = ref(['bx-home-alt', 'bx-tv', 'bx-camera-movie']);
       </div>
       <div class="menu">
         <ul>
-          <li v-for="(menuContexts, index) in menuContext" :key="index">
+          <li v-for="(menuContexts, index) in menuContext || []" :key="index">
             <RouterLink class="menu-link" :to="menuURL[index]">{{
               menuContexts
             }}</RouterLink>

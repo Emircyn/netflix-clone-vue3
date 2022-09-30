@@ -4,9 +4,9 @@ import { UseMainStore } from '../stores/mainStore';
 const mainStore = UseMainStore();
 </script>
 <template>
-  <div class="ademilter">
+  <div class="background-loading">
     <div class="netflix"></div>
-    <p style="color: #fff">mainStore.movies.code</p>
+
     <div class="race-by"></div>
   </div>
 </template>
@@ -59,7 +59,7 @@ const mainStore = UseMainStore();
   }
 }
 
-.ademilter {
+.background-loading {
   position: fixed;
   z-index: 1001;
   top: 0;

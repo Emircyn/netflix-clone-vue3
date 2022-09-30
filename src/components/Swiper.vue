@@ -3,12 +3,13 @@
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { UseMainStore } from '../stores/mainStore';
 import { Navigation } from 'swiper';
-import { onMounted, reactive, inject } from 'vue';
+import { onMounted, reactive, inject, watch } from 'vue';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
 const mainStore = UseMainStore();
 const appAxios = inject('appAxios');
+const router = inject('router');
 
 const state = reactive({
   fetchData: [],
@@ -39,47 +40,89 @@ const state = reactive({
     },
   },
 });
+
+watch(router.currentRoute, async () => {
+  if (
+    router.currentRoute._value.name === 'movie' ||
+    router.currentRoute._value.name === 'tv'
+  ) {
+    await appAxios
+      .get(
+        `/${router.currentRoute._value.name}/${
+          router.currentRoute._value.params.id
+        }/recommendations?api_key=${
+          import.meta.env.VITE_APP_API_KEY
+        }&language=${mainStore.lang}&page=1`
+      )
+      .then((response) => {
+        state.fetchData = response.data.results.filter(
+          (data) =>
+            data.poster_path !== null &&
+            data.backdrop_path !== null &&
+            data.overview.length > 0
+        );
+      });
+  }
+});
+
 onMounted(async () => {
-  await appAxios
-    .get(
-      `/${props.type}/popular?api_key=${
-        import.meta.env.VITE_APP_API_KEY
-      }&language=${mainStore.lang}&page=${props.page}`
-    )
-    .then((response) => {
-      state.fetchData = response.data.results.filter(
-        (data) =>
-          data.poster_path !== null &&
-          data.backdrop_path !== null &&
-          data.overview.length > 0
-      );
-    });
+  if (
+    router.currentRoute._value.name === 'movie' ||
+    router.currentRoute._value.name === 'tv'
+  ) {
+    await appAxios
+      .get(
+        `/${router.currentRoute._value.name}/${
+          router.currentRoute._value.params.id
+        }/recommendations?api_key=${
+          import.meta.env.VITE_APP_API_KEY
+        }&language=${mainStore.lang}&page=1`
+      )
+      .then((response) => {
+        state.fetchData = response.data.results.filter(
+          (data) =>
+            data.poster_path !== null &&
+            data.backdrop_path !== null &&
+            data.overview.length > 0
+        );
+      });
+  } else {
+    await appAxios
+      .get(
+        `/trending/${
+          router.currentRoute._value.name == 'home'
+            ? 'all'
+            : router.currentRoute._value.path
+        }/week?api_key=${import.meta.env.VITE_APP_API_KEY}&language=${
+          mainStore.lang
+        }&page=${props.page}`
+      )
+      .then((response) => {
+        state.fetchData = response.data.results.filter(
+          (data) =>
+            data.poster_path !== null &&
+            data.backdrop_path !== null &&
+            data.overview.length > 0
+        );
+      });
+  }
 });
 const props = defineProps({
   page: {
     page: String,
   },
-  type: {
-    type: String,
+  title: {
+    title: String,
   },
 });
 </script>
 
 <template>
-  <div class="swiper-grid">
+  <div class="swiper-grid" v-if="state.fetchData.length || [] > 0">
     <div class="swiper-column">
-      <a class="swiper-header" href="#"
-        >{{
-          mainStore.lang == 'tr-TR'
-            ? `Netflix'te Popüler ${
-                props.type == 'movie' ? 'Filmler' : 'Diziler'
-              }`
-            : `Netflix Popular ${
-                props.type == 'movie' ? 'Movies' : 'Tv-Series'
-              }`
-        }}
+      <a v-if="props.page <= 1 || props.page == null" class="swiper-header"
+        >{{ props.title }}
       </a>
-
       <swiper
         :modules="state.modules"
         :slidesPerView="6"
@@ -91,9 +134,7 @@ const props = defineProps({
         <swiper-slide
           v-for="(item, index) in state.fetchData || []"
           :key="index"
-          v-lazy:background-image.container="
-            `${mainStore.imagesUrl}${item.poster_path}`
-          "
+          v-lazy:background-image="`${mainStore.imagesUrl}${item.poster_path}`"
           lazy="loading"
           class="skeleton"
         >
@@ -101,8 +142,8 @@ const props = defineProps({
             <h5 class="content-title" style="text-transform: capitalize">
               {{
                 mainStore.lang == 'tr-TR'
-                  ? `${props.type == 'movie' ? 'Filim' : 'Dizi'}`
-                  : `${props.type == 'movie' ? 'Movie' : 'Tv-Series'}`
+                  ? `${item.media_type == 'movie' ? 'Film' : 'Dizi'}`
+                  : `${item.media_type == 'movie' ? 'Movie' : 'Tv-Series'}`
               }}
             </h5>
             <p class="content">{{ item.title || item.name }}</p>
@@ -111,7 +152,7 @@ const props = defineProps({
           <div class="swiper-button">
             <RouterLink
               class="button-rounded"
-              :to="`/${props.type}/${item.id}`"
+              :to="{ name: `${item.media_type}`, params: { id: item.id } }"
             >
               <i class="bx bx-info-circle"></i>
             </RouterLink>

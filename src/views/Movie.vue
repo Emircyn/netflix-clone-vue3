@@ -12,7 +12,7 @@ let pages = ref(10);
 window.addEventListener('scroll', (event) => {
   window.clearTimeout(scroll);
   scroll = setTimeout(() => {
-    pages.value += 2;
+    pages.value += 3;
   }, 500);
 });
 </script>
@@ -20,13 +20,8 @@ window.addEventListener('scroll', (event) => {
   <Suspense>
     <template #default>
       <main>
-        <BillboardVue type="movie" />
-        <SwiperVue
-          v-for="(value, key) in pages"
-          :key="key"
-          :page="key + 1"
-          type="movie"
-        />
+        <BillboardVue />
+        <SwiperVue v-for="(value, key) in pages" :key="key" :page="key + 1" />
       </main>
     </template>
     <template #fallback>

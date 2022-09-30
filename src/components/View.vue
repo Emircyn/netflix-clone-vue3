@@ -1,10 +1,11 @@
 <script setup>
-import { onMounted, inject, reactive } from 'vue';
+import { onMounted, inject, reactive, watch } from 'vue';
 import { UseMainStore } from '../stores/mainStore';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Navigation } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
+import SwiperCard from './Swiper.vue';
 
 const appAxios = inject('appAxios');
 const router = inject('router');
@@ -13,6 +14,7 @@ const mainStore = UseMainStore();
 const state = reactive({
   details: [],
   credits: [],
+  cat: [],
   video: [],
   modules: [Navigation],
   swiperOptions: {
@@ -42,7 +44,19 @@ const state = reactive({
   },
 });
 
-onMounted(async () => {
+const noOverview = () => {
+  appAxios
+    .get(
+      `/${router.currentRoute._value.name}/${
+        router.currentRoute._value.params.id
+      }?api_key=${import.meta.env.VITE_APP_API_KEY}&language=en-GB`
+    )
+    .then((response) => {
+      state.details.overview = response.data.overview;
+    });
+};
+
+watch(router.currentRoute, async () => {
   await appAxios
     .get(
       `/${router.currentRoute._value.name}/${
@@ -78,6 +92,49 @@ onMounted(async () => {
         (vid) => vid.type === 'Trailer' && vid.official === true
       );
     });
+  state.details.overview.length > 0 ? null : noOverview();
+});
+
+onMounted(async () => {
+  await appAxios
+    .get(
+      `/${router.currentRoute._value.name}/${
+        router.currentRoute._value.params.id
+      }?api_key=${import.meta.env.VITE_APP_API_KEY}&language=${mainStore.lang}`
+    )
+    .then((response) => {
+      state.details = response.data;
+    })
+    .catch((error) => {
+      router.push({ name: '404' });
+    });
+  await appAxios
+    .get(
+      `/${router.currentRoute._value.name}/${
+        router.currentRoute._value.params.id
+      }/credits?api_key=${import.meta.env.VITE_APP_API_KEY}&language=${
+        mainStore.lang
+      }`
+    )
+    .then((creditsResponse) => {
+      state.credits = creditsResponse.data.cast.filter(
+        (cast) => cast.profile_path !== null
+      );
+    });
+  await appAxios
+    .get(
+      `/${router.currentRoute._value.name}/${
+        router.currentRoute._value.params.id
+      }/videos?api_key=${import.meta.env.VITE_APP_API_KEY}&language=${
+        mainStore.lang
+      }&append_to_response=videos`
+    )
+    .then((videoResponse) => {
+      state.video = videoResponse.data.results.find(
+        (vid) => vid.type === 'Trailer' && vid.official === true
+      );
+    });
+  state.details.overview.length > 0 ? null : noOverview();
 });
 </script>
 
@@ -87,27 +144,18 @@ onMounted(async () => {
     v-lazy:background-image="`${mainStore.bgUrl}${state.details.backdrop_path}`"
     lazy="loading"
   >
-    <div class="content">
-      <div
-        :title="`${mainStore.lang == 'tr-TR' ? 'Geri Dön' : 'Go Back'}`"
-        @click="router.back()"
-      >
-        <button
-          style="
-            position: absolute;
-            background-color: transparent;
-            color: white;
-          "
-          class="button"
-        >
-          <span> <i class="bx bxs-chevrons-left"></i></span>
-        </button>
-      </div>
+    <div
+      :title="`${mainStore.lang == 'tr-TR' ? 'Geri Dön' : 'Go Back'}`"
+      @click="router.back()"
+    >
+      <button class="button back">
+        <span> <i class="bx bxs-chevrons-left"></i></span>
+      </button>
     </div>
     <div class="content">
       <div class="img">
         <img
-          v-lazy="`${mainStore.imagesUrl}${state.details.poster_path}`"
+          v-lazy="`${mainStore.bgUrl}${state.details.poster_path}`"
           draggable="false"
           lazy="loading"
           class="skeleton"
@@ -191,6 +239,7 @@ onMounted(async () => {
                 : null
             }}
           </p>
+
           <p class="about-small-header">
             {{ state.details.release_date || state.details.number_of_seasons
             }}<span v-if="router.currentRoute._value.name == 'tv'">{{
@@ -208,6 +257,13 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+
+    <SwiperCard
+      style="margin-left: 0 !important"
+      :title="`${
+        mainStore.lang == 'tr-TR' ? 'Benzer İçerikler' : 'Recommendations'
+      }`"
+    />
   </div>
 </template>
 <style>

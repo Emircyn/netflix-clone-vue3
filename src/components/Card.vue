@@ -10,7 +10,7 @@ const state = reactive({
   fetchData: [],
 });
 watchEffect((searchData) => {
-  if (mainStore.query.length > 0) {
+  if (mainStore.query.length || [] > 0) {
     const fetchData = setTimeout(() => {
       appAxios
         .get(
@@ -27,47 +27,59 @@ watchEffect((searchData) => {
               data.overview.length > 0
           );
         });
-    }, 1000);
+    }, 700);
     searchData(() => clearTimeout(fetchData));
+  } else {
+    appAxios
+      .get(
+        `/trending/all/day?api_key=${
+          import.meta.env.VITE_APP_API_KEY
+        }&language=${mainStore.lang}&page=${~~(Math.random() * 10) + 1}`
+      )
+      .then((response) => {
+        state.fetchData = response.data.results.filter(
+          (data) =>
+            data.poster_path !== null &&
+            data.backdrop_path !== null &&
+            data.overview.length > 0
+        );
+      });
   }
 });
 
-// const searchData = async (query) => {
-//   const dataFetch = await setTimeout(() => {
-//     appAxios
-//       .get(
-//         `search/keyword?api_key=${
-//           import.meta.env.VITE_APP_API_KEY
-//         }&query=${query}&language=${mainStore.lang}&page=1`
-//       )
-//       .then((response) => {
-//         state.fetchData = response.data.results.filter(
-//           (data) =>
-//             data.poster_path !== null &&
-//             data.backdrop_path !== null &&
-//             data.overview.length > 0
-//         );
-//       });
-//   }, 1000);
-//   query(() => clearTimeout(dataFetch));
-// };
 onMounted(async () => {
-  await appAxios
-    .get(
-      `/discover/${
-        mainStore.type[~~(Math.random() * mainStore.type.length)]
-      }?api_key=${import.meta.env.VITE_APP_API_KEY}&language=${
-        mainStore.lang
-      }&page=${~~(Math.random() * 10) + 1}`
-    )
-    .then((response) => {
-      state.fetchData = response.data.results.filter(
-        (data) =>
-          data.poster_path !== null &&
-          data.backdrop_path !== null &&
-          data.overview.length > 0
-      );
-    });
+  if (router.currentRoute._value.query.q) {
+    await appAxios
+      .get(
+        `search/multi?api_key=${import.meta.env.VITE_APP_API_KEY}&query=${
+          router.currentRoute._value.query.q
+        }&language=${mainStore.lang}&page=1`
+      )
+      .then((response) => {
+        state.fetchData = response.data.results.filter(
+          (data) =>
+            data.poster_path !== null &&
+            data.backdrop_path !== null &&
+            data.media_type != 'person' &&
+            data.overview.length > 0
+        );
+      });
+  } else {
+    await appAxios
+      .get(
+        `/trending/all/day?api_key=${
+          import.meta.env.VITE_APP_API_KEY
+        }&language=${mainStore.lang}&page=${~~(Math.random() * 10) + 1}`
+      )
+      .then((response) => {
+        state.fetchData = response.data.results.filter(
+          (data) =>
+            data.poster_path !== null &&
+            data.backdrop_path !== null &&
+            data.overview.length > 0
+        );
+      });
+  }
 });
 </script>
 <template>
@@ -87,7 +99,7 @@ onMounted(async () => {
         <!--movie-header-->
         <div class="movie-content">
           <div class="movie-content-header">
-            <a href="#">
+            <a>
               <h3 class="movie-title">{{ item.name || item.title }}</h3>
             </a>
             <div
@@ -99,23 +111,39 @@ onMounted(async () => {
           </div>
           <div class="movie-info">
             <div class="info-section">
-              <label>Date &amp; Time</label>
-              <span>Sun 8 Sept - 10:00PM</span>
+              <label>Type</label>
+              <span>
+                {{
+                  mainStore.lang == 'tr-TR'
+                    ? item.media_type == 'movie'
+                      ? 'Film'
+                      : 'Tv-Serisi'
+                    : item.media_type
+                }}</span
+              >
+            </div>
+            <div class="info-section">
+              <label>{{
+                mainStore.lang == 'tr-TR' ? 'Çıkış Tarihi' : 'Release Date'
+              }}</label>
+              <span>{{ item.release_date || item.first_air_date }}</span>
             </div>
             <!--date,time-->
-            <div class="info-section">
-              <label>Screen</label>
-              <span>03</span>
-            </div>
+
             <!--screen-->
             <div class="info-section">
-              <label>Row</label>
-              <span>F</span>
+              <label>{{ mainStore.lang == 'tr-TR' ? 'Oylar' : 'Vote' }}</label>
+              <span
+                ><i class="bx bxs-like"></i>
+                {{ Math.floor(item.vote_average) }}</span
+              >
             </div>
             <!--row-->
             <div class="info-section">
-              <label>Seat</label>
-              <span>21,22</span>
+              <label>{{
+                mainStore.lang == 'tr-TR' ? 'Popülerlik' : 'Popularity'
+              }}</label>
+              <span>%{{ Math.floor(item.popularity / 100).toFixed(1) }}</span>
             </div>
             <!--seat-->
           </div>

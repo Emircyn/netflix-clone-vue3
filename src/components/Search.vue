@@ -1,5 +1,5 @@
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, inject, watch } from 'vue';
 import { UseMainStore } from '../stores/mainStore';
 const mainStore = UseMainStore();
 
@@ -12,7 +12,6 @@ const router = inject('router');
 function pushWithQuery(query) {
   mainStore.query = query;
   router.push(`search?q=${query}`);
-  query.value = '';
 }
 
 const activeInput = () => {
@@ -25,6 +24,11 @@ const activeInput = () => {
         }, 500) &&
         router.push('/search'));
 };
+watch(router.currentRoute, () => {
+  router.currentRoute._value.name !== 'search'
+    ? ((query.value = ''), (mainStore.query = ''), (isActive.value = false))
+    : null;
+});
 </script>
 <template>
   <div class="search-box" :class="{ active: isActive }">
@@ -59,9 +63,8 @@ input[type='search']::-webkit-search-cancel-button {
   pointer-events: none;
   margin: 2.5px 5px 2.5px 5px;
 }
-
 input[type='search']:focus::-webkit-search-cancel-button {
-  opacity: 0.5;
+  opacity: 0.3;
   pointer-events: all;
 }
 
