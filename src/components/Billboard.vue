@@ -118,7 +118,7 @@ onMounted(async () => {
     lazy="loading"
   >
     <iframe
-      v-if="state.videoPlay && isMobile()"
+      v-if="state.videoPlay"
       class="billboard"
       :src="`https://www.youtube.com/embed/${
         state.video.key
@@ -138,7 +138,7 @@ onMounted(async () => {
         <button
           class="button button-white margin-r-05"
           @click="state.videoPlay = !state.videoPlay"
-          v-if="state.video && isMobile()"
+          v-if="state.video && !isMobile()"
         >
           <span>
             <i

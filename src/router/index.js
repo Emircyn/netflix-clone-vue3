@@ -7,34 +7,36 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () =>
-        import(/* webpackChunkName: home */ '../views/HomeView.vue'),
+        import(/* webpackChunkName: "group-index" */ '../views/HomeView.vue'),
     },
     {
       path: '/search',
       name: 'search',
       component: () =>
-        import(/* webpackChunkName: search */ '../views/SearchView.vue'),
+        import(/* webpackChunkName: "group-index" */ '../views/SearchView.vue'),
     },
     {
       path: '/tv',
       name: 'tvs',
 
       component: () =>
-        import(/* webpackChunkName: tvs */ '../views/tvSeries.vue'),
+        import(/* webpackChunkName: "group-index" */ '../views/tvSeries.vue'),
     },
     {
       path: '/movie',
       name: 'movies',
 
       component: () =>
-        import(/* webpackChunkName: movies */ '../views/Movie.vue'),
+        import(/* webpackChunkName: "group-index" */ '../views/Movie.vue'),
     },
     {
       path: '/movie/:id',
       name: 'movie',
 
       component: () =>
-        import(/* webpackChunkName: movie */ '../views/movieDetail.vue'),
+        import(
+          /* webpackChunkName: "group-index" */ '../views/movieDetail.vue'
+        ),
     },
 
     {
@@ -42,13 +44,23 @@ const router = createRouter({
       name: 'tv',
 
       component: () =>
-        import(/* webpackChunkName: tv */ '../views/movieDetail.vue'),
+        import(
+          /* webpackChunkName: "group-index" */ '../views/movieDetail.vue'
+        ),
     },
     {
       path: '/:pathMatch(.*)*',
       name: '404',
 
-      component: () => import(/* webpackChunkName: 404 */ '../views/404.vue'),
+      component: () =>
+        import(/* webpackChunkName: "group-index" */ '../views/404.vue'),
+    },
+    {
+      path: '/404-page',
+      name: '404-page',
+
+      component: () =>
+        import(/* webpackChunkName: "group-index" */ '../views/404.vue'),
     },
   ],
   scrollBehavior(to, from, savedPosition) {

@@ -1,18 +1,13 @@
 <script setup>
-import { ref, inject, watch } from 'vue';
+import { ref, inject, watch, onMounted } from 'vue';
 import { UseMainStore } from '../stores/mainStore';
 const mainStore = UseMainStore();
 
 const isActive = ref(false);
 const myInput = ref(null);
-const query = ref(null);
+const query = ref('');
 
 const router = inject('router');
-
-function pushWithQuery(query) {
-  mainStore.query = query;
-  router.push(`search?q=${query}`);
-}
 
 const activeInput = () => {
   isActive.value
@@ -29,6 +24,20 @@ watch(router.currentRoute, () => {
     ? ((query.value = ''), (mainStore.query = ''), (isActive.value = false))
     : null;
 });
+watch(query, () => {
+  query.value.length > 0
+    ? ((mainStore.query = query.value), router.push(`/search?q=${query.value}`))
+    : null;
+});
+onMounted(() => {
+  router.currentRoute._value
+    ? setTimeout(() => {
+        router.currentRoute._value.query.q
+          ? (mainStore.query = router.currentRoute._value.query.q)
+          : (mainStore.query = '');
+      }, 500)
+    : null;
+});
 </script>
 <template>
   <div class="search-box" :class="{ active: isActive }">
@@ -40,7 +49,6 @@ watch(router.currentRoute, () => {
         ref="myInput"
         type="search"
         name="search"
-        @keyup="pushWithQuery(query)"
         id="search"
         v-model="query"
         autocomplete="off"

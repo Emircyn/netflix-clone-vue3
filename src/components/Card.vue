@@ -1,6 +1,8 @@
 <script setup>
 import { UseMainStore } from '../stores/mainStore';
-import { onMounted, reactive, inject, watch, watchEffect } from 'vue';
+import { onMounted, reactive, inject, watchEffect, watch } from 'vue';
+import SwiperCard from './Swiper.vue';
+
 const appAxios = inject('appAxios');
 
 const router = inject('router');
@@ -9,6 +11,7 @@ const mainStore = UseMainStore();
 const state = reactive({
   fetchData: [],
 });
+
 watchEffect((searchData) => {
   if (mainStore.query.length || [] > 0) {
     const fetchData = setTimeout(() => {
@@ -48,7 +51,12 @@ watchEffect((searchData) => {
 });
 
 onMounted(async () => {
-  if (router.currentRoute._value.query.q) {
+  console.log(router.currentRoute._value.query.q);
+  if (
+    router.currentRoute._value.query.q ||
+    router.currentRoute._value.query.q != undefined
+  ) {
+    mainStore.query = router.currentRoute._value.query.q;
     await appAxios
       .get(
         `search/multi?api_key=${import.meta.env.VITE_APP_API_KEY}&query=${
@@ -84,7 +92,31 @@ onMounted(async () => {
 </script>
 <template>
   <div class="container">
+    <div class="swiper-search" v-if="state.fetchData.length <= 0">
+      <SwiperCard
+        page="1"
+        :title="
+          state.fetchData.length || [] <= 0
+            ? mainStore.lang == 'tr-TR'
+              ? `\”${mainStore.query}\” için herhangi bir eşleşme bulamadık. En popüler TV şovlarımıza ve filmlerimize göz atın.
+`
+              : `We didn't find any matches for \”${mainStore.query}\” Browse our most popular TV shows and movies.`
+            : null
+        "
+      />
+    </div>
     <div class="grid-container">
+      <Transition>
+        <div class="search-query" v-if="mainStore.query.length || [] > 0">
+          <a>{{
+            state.fetchData.length || [] > 0
+              ? mainStore.lang == 'tr-TR'
+                ? `\”${mainStore.query}\” için sonuçlar.`
+                : `Results for \”${mainStore.query}\”.`
+              : null
+          }}</a>
+        </div>
+      </Transition>
       <div
         class="movie-card"
         v-for="(item, index) in state.fetchData || []"
@@ -155,4 +187,14 @@ onMounted(async () => {
     <!--container-->
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>

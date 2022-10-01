@@ -12,6 +12,7 @@ const router = inject('router');
 const mainStore = UseMainStore();
 
 const state = reactive({
+  status: null,
   details: [],
   credits: [],
   cat: [],
@@ -105,9 +106,10 @@ onMounted(async () => {
     .then((response) => {
       state.details = response.data;
     })
-    .catch((error) => {
-      router.push({ name: '404' });
+    .catch((e) => {
+      router.push({ name: '404-page' });
     });
+
   await appAxios
     .get(
       `/${router.currentRoute._value.name}/${
@@ -144,14 +146,6 @@ onMounted(async () => {
     v-lazy:background-image="`${mainStore.bgUrl}${state.details.backdrop_path}`"
     lazy="loading"
   >
-    <div
-      :title="`${mainStore.lang == 'tr-TR' ? 'Geri Dön' : 'Go Back'}`"
-      @click="router.back()"
-    >
-      <button class="button back">
-        <span> <i class="bx bxs-chevrons-left"></i></span>
-      </button>
-    </div>
     <div class="content">
       <div class="img">
         <img

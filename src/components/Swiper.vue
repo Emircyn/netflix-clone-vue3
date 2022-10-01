@@ -90,7 +90,8 @@ onMounted(async () => {
     await appAxios
       .get(
         `/trending/${
-          router.currentRoute._value.name == 'home'
+          router.currentRoute._value.name == 'home' ||
+          router.currentRoute._value.name == 'search'
             ? 'all'
             : router.currentRoute._value.path
         }/week?api_key=${import.meta.env.VITE_APP_API_KEY}&language=${
@@ -154,7 +155,10 @@ const props = defineProps({
               class="button-rounded"
               :to="{ name: `${item.media_type}`, params: { id: item.id } }"
             >
-              <i class="bx bx-info-circle"></i>
+              <i
+                @click="router.push(`${item.media_type}${item.id}`)"
+                class="bx bx-info-circle"
+              ></i>
             </RouterLink>
           </div>
 
