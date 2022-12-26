@@ -20,6 +20,3 @@ To start using this app, follow these steps:
 
 Follow these steps to start using this app.
 
-## License information
-
-This project is licensed under the MIT License. You can find the license information in the project's LICENSE file.
