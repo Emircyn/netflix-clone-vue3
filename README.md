@@ -1,29 +1,24 @@
-# netflix-clone-vue3
+# Netflix Clone
 
-This template should help get you started developing with Vue 3 in Vite.
+This project is built with Vue 3, Swiper JS, and TheMovieDB API. It is a clone of the Netflix website.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.vscode-typescript-vue-plugin).
+- Movies: Users can view recommended movies.
+- Categories: Users can view movies by different categories(`Moive and series`).
+- Search: Users can search for movies using the search bar and view the results.
 
-## Customize configuration
+## Usage guide
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+To start using this app, follow these steps:
 
-## Project Setup
+1. Clone the repository to your computer.
+2. Go to the project directory and run `npm install` to install the required packages.
+3. Run `npm run serve` to start the development server.
+4. The app will open in your browser.
 
-```sh
-npm install
-```
+Follow these steps to start using this app.
 
-### Compile and Hot-Reload for Development
+## License information
 
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+This project is licensed under the MIT License. You can find the license information in the project's LICENSE file.
