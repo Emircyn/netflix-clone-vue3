@@ -7,6 +7,7 @@ This project is built with Vue 3, Swiper JS, and TheMovieDB API. It is a clone o
 - Movies: Users can view recommended movies.
 - Categories: Users can view movies by different categories.
 - Search: Users can search for movies using the search bar and view the results.
+- The language of the site is set according to the language of your browser. If the language of your browser is not found in the API, English is automatically selected.
 
 ## Demo
 
