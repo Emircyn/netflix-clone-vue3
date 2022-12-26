@@ -8,6 +8,10 @@ This project is built with Vue 3, Swiper JS, and TheMovieDB API. It is a clone o
 - Categories: Users can view movies by different categories.
 - Search: Users can search for movies using the search bar and view the results.
 
+## Demo
+
+You can try the app at this link: https://netflix-clone-vue3.vercel.app
+
 ## Usage guide
 
 To start using this app, follow these steps:
