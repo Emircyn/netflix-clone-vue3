@@ -19,4 +19,3 @@ To start using this app, follow these steps:
 5. The app will open in your browser.
 
 Follow these steps to start using this app.
-
