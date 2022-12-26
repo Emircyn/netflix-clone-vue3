@@ -14,7 +14,7 @@ To start using this app, follow these steps:
 
 1. Clone the repository to your computer.
 2. Go to the project directory and run `npm install` to install the required packages.
-3.Create a file named .env in the root of the project and add your TheMovieDB API key like this: VITE_APP_API_KEY = YOUR_API_KEY. You can get your API key by signing up for an account at TheMovieDB website.
+3.Create a file named .env in the root of the project and add your TheMovieDB API key like this:VITE_APP_API_KEY=YOUR_API_KEY. You can get your API key by signing up for an account at TheMovieDB website.
 4. Run `npm run serve` to start the development server.
 5. The app will open in your browser.
 
